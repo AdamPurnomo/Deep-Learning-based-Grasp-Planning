@@ -159,10 +159,7 @@ for epoch in range(Epochs):
     model.save_weights(path)
 
 model.save_weights(r'..\..\Training Output\Weights\Discriminator_hv9.h5')
-<<<<<<< HEAD
-=======
 model.save_weights(r'..\..\Training Output\Weights\Discriminator_hv9')
->>>>>>> e8bb9ed9a1318ba1446b9e75c7647a93bb5c2ffb
 N = np.arange(0, Epochs)
 History = np.array([N, tl, ta, tp, vl, va, vp])
 np.save(r'..\..\Training Output\History\Discriminator_hv9.npy', History)

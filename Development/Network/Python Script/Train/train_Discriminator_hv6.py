@@ -42,11 +42,7 @@ labels = labels.astype(np.float32)
 data = np.array(data, dtype = np.float32) / 255.
 
 #splitting data to train and validation data
-<<<<<<< HEAD
-split_indice = 600
-=======
 split_indice = 40000
->>>>>>> e8bb9ed9a1318ba1446b9e75c7647a93bb5c2ffb
 train_x = data[0:split_indice]
 train_y = labels[0:split_indice]
 
@@ -163,10 +159,7 @@ for epoch in range(Epochs):
     model.save_weights(path)
 
 model.save_weights(r'..\..\Training Output\Weights\Discriminator_hv6.h5')
-<<<<<<< HEAD
-=======
 model.save_weights(r'..\..\Training Output\Weights\Discriminator_hv6')
->>>>>>> e8bb9ed9a1318ba1446b9e75c7647a93bb5c2ffb
 N = np.arange(0, Epochs)
 History = np.array([N, tl, ta, tp, vl, va, vp])
 np.save(r'..\..\Training Output\History\Discriminator_hv6.npy', History)
