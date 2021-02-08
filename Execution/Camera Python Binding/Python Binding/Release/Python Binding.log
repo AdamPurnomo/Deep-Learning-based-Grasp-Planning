@@ -1,0 +1,8 @@
+﻿  stdafx.cpp
+  dllmain.cpp
+  Python Binding.cpp
+  コード生成しています。
+  All 1 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  コード生成が終了しました。
+  Python Binding.vcxproj -> C:\Users\Adam\Desktop\Python Binding\Release\camera.pyd
+  Python Binding.vcxproj -> C:\Users\Adam\Desktop\Python Binding\Release\camera.pdb (Full PDB)

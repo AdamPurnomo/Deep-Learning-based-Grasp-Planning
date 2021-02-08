@@ -1,0 +1,8 @@
+﻿     ライブラリ C:\Users\Adam\Desktop\Execution\Camera Python Binding\x64\Release\getpointmap.lib とオブジェクト C:\Users\Adam\Desktop\Execution\Camera Python Binding\x64\Release\getpointmap.exp を作成中
+  コード生成しています。
+  13 of 387 functions ( 3.4%) were compiled, the rest were copied from previous compilation.
+    12 functions were new in current compilation
+    31 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  Python Binding.vcxproj -> C:\Users\Adam\Desktop\Execution\Camera Python Binding\x64\Release\getpointmap.pyd
+  Python Binding.vcxproj -> C:\Users\Adam\Desktop\Execution\Camera Python Binding\x64\Release\getpointmap.pdb (Full PDB)
