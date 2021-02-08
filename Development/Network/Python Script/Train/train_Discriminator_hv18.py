@@ -1,4 +1,7 @@
 # %%
+import sys 
+sys.path.append(r'../../../utility')
+sys.path.append(r'../model')
 import os
 import numpy as np 
 import random as r 

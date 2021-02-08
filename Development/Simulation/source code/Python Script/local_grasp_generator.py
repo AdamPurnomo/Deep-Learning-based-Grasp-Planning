@@ -1,4 +1,6 @@
 # %%
+import sys 
+sys.path.append(r'../../../utility')
 import trimesh as tr 
 import numpy as np 
 import pybullet as pb 
