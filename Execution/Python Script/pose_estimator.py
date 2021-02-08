@@ -88,7 +88,7 @@ def rotate_back(rel_vect, M, p_grasps):
     ga_vect = ga_vect[:, 0:2]
     return ga_vect
 
-def to_cartesian(pointmap, ga_vect, p_grasps, scale=0.25):
+def apv_to_cartesian(pointmap, ga_vect, p_grasps, scale=0.25):
     '''
     Transform grasp approaching vector from pixel coordinate to
     cartesian cooridanate
@@ -185,7 +185,7 @@ def X_R(phi):
     X[2,2] = np.cos(phi)
     return X
 
-def extract_pose(p_grasps, cart_apvect, scale):
+def extract_pose_v1(p_grasps, cart_apvect, scale):
     '''
     Extract euler angle from approaching pose vector
 
@@ -228,6 +228,101 @@ def extract_pose(p_grasps, cart_apvect, scale):
         rot_matrix.append(R)
         euler_angle.append(np.array([phi, theta, psi]))
     return rot_matrix, np.array(euler_angle)
+
+def extract_pose_v2(p_grasps, cart_apvect, scale):
+    '''
+    Extract euler angle from approaching pose vector
+
+    #input
+    p_grasps        : positive grasp candidates in pixel coordinate
+    cart_apvect     : grasp approaching vector in cartesian coordinate  
+    scale           : the norm of grasp approaching vector
+
+    #output
+    rot_matrix      : rotation matrix on how to approach the object
+                      Shape (n,3,3)
+    euler           : euler rotation on how to approach the object
+                     [yaw, pitch, roll]
+                     Shape (n,3)        
+    '''
+    size = len(p_grasps)
+    rot_matrix = []
+    euler_angle = []
+
+    for i in range(size):
+        vect1 = p_grasps[i,0] - p_grasps[i,1]
+        vect2 = p_grasps[i,1] - p_grasps[i,0]
+        psi1 = np.arctan2(-vect1[1], vect1[0])
+        psi2 = np.arctan2(-vect2[1], vect2[0])
+        psi = np.array([psi1, psi2])
+        indices = np.argmin(np.abs(psi))
+        psi = psi[indices]
+
+        Z = Z_R(psi)
+        v = cart_apvect[i]/scale
+
+        phi = np.arctan2(-v[1],v[2])
+        theta = np.arcsin(v[0])
+        Y = Y_R(theta)
+        X = X_R(phi)
+
+        R = X.dot(Y.dot(Z))
+
+        rot_matrix.append(R)
+        euler_angle.append(np.array([phi, theta, psi]))
+    return rot_matrix, np.array(euler_angle)
+
+
+def pre_grasp_pos_v1(grasp_pos,euler,dist):
+    '''
+    Calculate the pre-grasp position before the robot grasp the target object.
+
+    #input
+    grasp_pos   : The position of the grasp candidate in cartesian coordinate
+    euler       : The orientation angle of the robot hand in pre-grasping configuration
+    dist        : Distance of the robot hand to the object in pre-grasping configuration
+
+    #output
+    pr_grasp    : Position of the robot hand in pre-grasping configuration in cartesian coordinate
+    '''
+    phi = euler[0]
+    theta = euler[1]
+    psi = euler[2]
+    rot_x = X_R(phi)
+    rot_y = Y_R(theta)
+    rot_z = Z_R(psi)
+    rel_vect = np.array([0,0,dist])
+    pr_grasp = rot_z.dot(rot_y.dot(rot_x.dot(rel_vect)))
+    R_camera = Z_R(np.pi)
+    pr_grasp = R_camera.dot(pr_grasp)
+    pr_grasp = grasp_pos + pr_grasp
+    return pr_grasp
+        
+def pre_grasp_pos_v2(grasp_pos,euler,dist):
+    '''
+    Calculate the pre-grasp position before the robot grasp the target object.
+
+    #input
+    grasp_pos   : The position of the grasp candidate in cartesian coordinate
+    euler       : The orientation angle of the robot hand in pre-grasping configuration
+    dist        : Distance of the robot hand to the object in pre-grasping configuration
+
+    #output
+    pr_grasp    : Position of the robot hand in pre-grasping configuration in cartesian coordinate
+    '''
+
+    phi = euler[0]
+    theta = euler[1]
+    psi = euler[2]
+    rot_x = X_R(phi)
+    rot_y = Y_R(theta)
+    rot_z = Z_R(psi)
+    rel_vect = np.array([0,0,dist])
+    pr_grasp = rot_x.dot(rot_y.dot(rot_z.dot(rel_vect)))
+    R_camera = Z_R(np.pi)
+    pr_grasp = R_camera.dot(pr_grasp)
+    pr_grasp = grasp_pos + pr_grasp
+    return pr_grasp
         
 
 

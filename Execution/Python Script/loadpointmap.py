@@ -1,7 +1,7 @@
 
 # %%
 import sys
-sys.path.append(r"../Camera Python Binding/x64/Release")
+sys.path.append(r"C:/Users/Adam/Desktop/Controller_Ver.3.8.7/Themes/adam/Execution/Camera Python Binding/x64/Release")
 
 import numpy as np 
 import cv2
@@ -40,6 +40,18 @@ def load_pointmap(img_size, roi):
     x = x[roi[0]:roi[1], roi[2]:roi[3]]
     y = y[roi[0]:roi[1], roi[2]:roi[3]]
     z = z[roi[0]:roi[1], roi[2]:roi[3]]
+
+    z = np.array(z, dtype='float32')
+    y = np.array(y, dtype='float32')
+    x = np.array(x, dtype='float32')
+
+    invalid_id = np.where(np.isnan(z))
+    mask = np.zeros(z.shape, dtype='uint8')
+    mask[invalid_id] = 1
+
+    x = cv2.inpaint(x, mask, 3, cv2.INPAINT_TELEA)
+    y = cv2.inpaint(y, mask, 3, cv2.INPAINT_TELEA)
+    z = cv2.inpaint(z, mask, 3, cv2.INPAINT_TELEA)
     return x, y, z
 
 def to_depthImg(depthmap):
@@ -67,7 +79,7 @@ def to_depthImg(depthmap):
 
     return depthImg
 
-def to_cartesian(best_grasp, pointmap):
+def to_cartesian(points, pointmap, double=True):
     '''
     Transform the location of best grasp candidates from pixel coordinate to cartesian coordinate
     
@@ -82,16 +94,55 @@ def to_cartesian(best_grasp, pointmap):
     xmap = pointmap[0]
     ymap = pointmap[1]
     zmap = pointmap[2]
-
-    center = (0.5*(best_grasp[0] + best_grasp[1])).astype('int')
-
+    
+    if(double==True):
+        center = (0.5*(points[0] + points[1])).astype('int')
+        z = estimate_z(points, zmap)
+    else:
+        center = points.astype('int')
+        z = zmap[center[1], center[0]] 
+        
     x = xmap[center[1], center[0]]
     y = ymap[center[1], center[0]]
-    z = zmap[center[1], center[0]]
-    
     c = np.array([x, y, z])
     return c
 
+def estimate_z(best_grasp, zmap):
 
+    #parameters for rotation nd cropping
+    grasp_vector = best_grasp[1] - best_grasp[0]
+    grasp_center = ((best_grasp[1] + best_grasp[0])/2).astype(int)
+    angle = np.arctan2(grasp_vector[1], grasp_vector[0]) * 180 / np.pi
+
+    #rotation and cropping
+    M = cv2.getRotationMatrix2D((grasp_center[0], grasp_center[1]), angle, 1.0)
+    z_rotated = cv2.warpAffine(zmap, M, (zmap.shape[1],zmap.shape[0]))
+
+    contactpoint = np.ones((2,3))
+    contactpoint[:,0:2] = best_grasp
+    contactpoint = M.dot(contactpoint.T).T.astype(int)
+
+    cp1_idx = np.argmin(contactpoint[:, 0])
+    cp2_idx = np.argmax(contactpoint[:, 0])
+
+    cp1 = contactpoint[cp1_idx]
+    cp1_left = cp1[0]
+    cp1_right = cp1[0] + 40
+
+    cp2 = contactpoint[cp2_idx]
+    cp2_left = cp2[0] - 40
+    cp2_right = cp2[0]
+
+    cp_top = cp1[1] - 20
+    cp_bottom = cp1[1] + 20
+
+    cp1_area = z_rotated[cp_top:cp_bottom, cp1_left:cp1_right]
+    cp2_area = z_rotated[cp_top:cp_bottom, cp2_left:cp2_right]
+    
+    cp1_depth = np.sum(cp1_area)/cp1_area.size
+    cp2_depth = np.sum(cp2_area)/cp2_area.size
+
+    z = 0.5*(cp1_depth + cp2_depth)
+    return z
 
 

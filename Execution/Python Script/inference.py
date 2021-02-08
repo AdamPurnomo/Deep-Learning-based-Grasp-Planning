@@ -11,36 +11,42 @@ import loadpointmap as lp
 import img_processor as ip
 import antipodal_sampler as ap 
 import pose_estimator as pe 
+import socket
 import pandas as pd
 
 from model import Discriminator, MaskPredictor, GraspNet
 
 #parameters
 parameters = {'hv18': [35, 45, 220, 100], 
-              'hv8':[38, 44, 220, 220]}
-file_dir = r'../Temporary Data/pointmap.txt'
+              'hv8':[170, 180, 220, 220],
+	      'hv9': [35, 45, 220, 100]}
 img_save_dir = r'../Grasp Sequence Image/ '
-pose_dir = r'../Temporary Data/pose.txt'
+temp_dir = r'../Temporary Data/ '
 
-data_size = parameters['hv18'][2:4]
-grasp_range = parameters['hv18'][0:2]
+data_size = parameters['hv9'][2:4]
+grasp_range = parameters['hv9'][0:2]
 img_size = [1024,1280]
 roi = [230,730,200,970]
 
+#client communication
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((socket.gethostname(), 1234))
+s.listen(5)
+
 #building and loading  model's weight
-weight_dir0 = r'../Weights/Discriminator_hv18'
-weight_dir1 = r'../Weights/MaskPredictor_hv18_v1'
+weight_dir0 = r'../Weights/Discriminator_hv9'
+weight_dir1 = r'../Weights/MaskPredictor_hv9'
 
 D = Discriminator()
-D.build((1,220,100,3))
+D.build((1,data_size[0],data_size[1],3))
 D.load_weights(weight_dir0)
 
 M = MaskPredictor()
-M.build((1,220,100,3))
+M.build((1,data_size[0],data_size[1],3))
 M.load_weights(weight_dir1)
 
 model = GraspNet()
-model.build((1,220,100,3))
+model.build((1,data_size[0],data_size[1],3))
 
 #combining weights
 for i in range(11):
@@ -53,19 +59,24 @@ for i in range(11,20):
 
 scores_list = []
 masks_list = []
+confidence = []
 
 @tf.function
 def inference(image):
     score, mask = model(image)
     return score, mask
 
-finished_flag = 0
 iterator = 0
+loop_num = pd.read_csv(r'..\..\system_loop\loop_num.txt', header=None)[0][0]
 
-while(finished_flag == 0):
+while(iterator<loop_num):
 	#reading flag
-	finished_flag = pd.read_csv(r'..\Temporary Data\finished_flag.txt', header=None)[0][0]
-	action_done_flag = pd.read_csv(r'..\Temporary Data\action_done_flag.txt', header=None)[0][0]
+	print("listening . . .")
+	clientsocket, address = s.accept()
+	print(f"Connection from {address} has been establised.")
+	action_done_flag = int(clientsocket.recv(1024).decode("utf-8"))
+	clientsocket.close()
+	print("Action Done")		
 
 	if(action_done_flag==1):
 		#get pointmap and depth image
@@ -117,29 +128,66 @@ while(finished_flag == 0):
 		#extracting pose
 		rel_vect = pe.locate_sparse_matrix(p_masks)
 		ga_vect = pe.rotate_back(rel_vect, r_matrix, p_grasps)
-		cart_apvect = pe.to_cartesian(pointmap, ga_vect, p_grasps, 40)
-		R, euler = pe.extract_pose(p_grasps, cart_apvect, 40)
+		cart_apvect = pe.apv_to_cartesian(pointmap, ga_vect, p_grasps, 35)
+		R, euler = pe.extract_pose_v2(p_grasps, cart_apvect, 35)
 		euler = euler*180/np.pi
-
-		#flag logging
-		action_done_flag = np.array([0], dtype='int')
-		np.savetxt(r'..\Temporary Data\action_done_flag.txt',action_done_flag)
+		
 
 		#image sequence logging
 		save_dir = img_save_dir + str(iterator) + '.png' 
-		best_grasp = p_grasps[0]
-		ap_vect = ga_vect[0]
-		orient = euler[0]
-		dummy = ip.draw_grasp_representation(best_grasp, best=True, ap_vect, labels = 1, depthImg, data_size, save_dir)
+		index = np.random.randint(0,3)
+		best_grasp = p_grasps[index]
+		ap_vect = ga_vect[index]
+		orient = euler[index]
+		rcapvect = cart_apvect[index]
+		confidence.append(p_scores[index])
+		
+		
+		#Drawing Rectangle
+		ip.draw_best_grasp(best_grasp, ap_vect, depthImg, data_size, save_dir)
 		print("Image has been saved!\n")
 
 		#grasp position and orientation logging
 		c = lp.to_cartesian(best_grasp, pointmap)
-		pose = np.hstack((c, orient))
-		np.savetxt(pose_dir, pose, delimiter='\n')
+		cap_vect = lp.to_cartesian(ap_vect, pointmap, False)
+
+		home_base = np.array([0, 400, 401.5])
+		c = c - home_base
+		angle = np.pi*orient/180
+		rel_pre_grasp = pe.pre_grasp_pos_v2(c, angle,30)
+		stroke = c - rel_pre_grasp
+
+		orient = np.array([-orient[0], orient[1], -orient[2]])
+		sixdfirst_pose = np.array([rel_pre_grasp[0], rel_pre_grasp[1] ,rel_pre_grasp[2], orient[0], orient[1], orient[2]]).reshape((1,6))
+		sixd_stroke = np.array([stroke[0], stroke[1], stroke[2], 0, 0, 0]).reshape((1,6))
+
+		fourdfirst_pose = np.array([c[0], c[1], 0, 0, 0, orient[2]]).reshape((1,6))	
+		fourd_stroke = np.array([0, 0, c[2], 0, 0, 0]).reshape((1,6))		
+
+		file_dir = temp_dir + r'sixdfirst_pose.txt'
+		np.savetxt(file_dir, sixdfirst_pose, delimiter=' ', fmt='%f')
+		file_dir = temp_dir + r'sixd_stroke.txt'
+		np.savetxt(file_dir, sixd_stroke, delimiter=' ', fmt='%f')
+		
+		file_dir = temp_dir + r'fourdfirst_pose.txt'
+		np.savetxt(file_dir, fourdfirst_pose, delimiter=' ', fmt='%f')
+		file_dir = temp_dir + r'fourd_stroke.txt'
+		np.savetxt(file_dir, fourd_stroke, delimiter=' ', fmt='%f')
+
+
 		print("Pose has been saved!\n")
+		
+		#flag
+		clientsocket, addres = s.accept()
+		clientsocket.send(bytes("0", "utf-8"))
+		print("Action Start")
+		clientsocket.close() 
 
 		iterator += 1
+
+confidence = np.array(confidence)
+file_dir = temp_dir + r'confidence level.txt'
+np.savetxt(file_dir, confidence, delimiter = ' ', fmt = '%f')
 
 
 		
