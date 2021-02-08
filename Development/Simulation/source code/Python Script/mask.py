@@ -74,6 +74,7 @@ def mask_visualization(p_zvec, grasps, data_size):
     Create a visualization for orientation mask. The visualization will not
     be used for training the network, instead they are only used for the sake
     of visualization.
+    
     #input
     p_zvec      : projection of z_vec in the image that represents object orientation
                   Shape (n, 2)

@@ -132,16 +132,12 @@ def sample_surface(mesh, count):
     For individual triangle sampling uses this method:
     http://mathworld.wolfram.com/TrianglePointPicking.html
     #input
-    mesh : trimesh.Trimesh
-      Geometry to sample the surface of
-    count : int
-      Number of points to return
+    mesh    : trimesh.Trimesh Geometry to sample the surface of
+    count   : int Number of points to return
 
 	#output
-    samples : (count, 3) float
-      Points in space on the surface of mesh
-    face_index : (count,) int
-      Indices of faces for each sampled point
+    samples : (count, 3) float Points in space on the surface of mesh
+    face_index : (count,) int Indices of faces for each sampled point
     """
 
     # len(mesh.faces) float, array of the areas

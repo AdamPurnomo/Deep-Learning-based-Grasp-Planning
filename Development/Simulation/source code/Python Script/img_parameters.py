@@ -11,10 +11,9 @@ import json
 
 """This is the simulation file that needs to be run in prior of generating the synthethic data. 
 This simulation will calculate the appropriate image size and max-min grasp distance in term of pixel 
-for each object category. However, for a very concave object like hv18, this calculation may not be accurate."""
+for each object category. However, for a very concave object like hv18, this calculation may not be accurate.
 
-"""part_loc represents the file location of the specific part which we estimate the parameters. 
-Pls change according to your need, other than that, there is nothing you should change """
+It should be noted that the dimension between trimesh environment and pybullet environment is different."""
 
 
 with open(r'..\JSON File\parameters.json') as f:
@@ -24,62 +23,17 @@ pi = np.pi/180
 draw = 1
 printtext = 0
 
-
-
-"""
-The size in trimesh is defined as meter, while in pybullet, the size is in dm
-"""
-
-
-def drawAABB(aabb):
-    aabbMin = aabb[0]
-    aabbMax = aabb[1]
-    f = [aabbMin[0], aabbMin[1], aabbMin[2]]
-    t = [aabbMax[0], aabbMin[1], aabbMin[2]]
-    pb.addUserDebugLine(f, t, [1, 0, 0])
-    f = [aabbMin[0], aabbMin[1], aabbMin[2]]
-    t = [aabbMin[0], aabbMax[1], aabbMin[2]]
-    pb.addUserDebugLine(f, t, [0, 1, 0])
-    f = [aabbMin[0], aabbMin[1], aabbMin[2]]
-    t = [aabbMin[0], aabbMin[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [0, 0, 1])
-    
-    f = [aabbMin[0], aabbMin[1], aabbMax[2]]
-    t = [aabbMin[0], aabbMax[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMin[0], aabbMin[1], aabbMax[2]]
-    t = [aabbMax[0], aabbMin[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMax[0], aabbMin[1], aabbMin[2]]
-    t = [aabbMax[0], aabbMin[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMax[0], aabbMin[1], aabbMin[2]]
-    t = [aabbMax[0], aabbMax[1], aabbMin[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMax[0], aabbMax[1], aabbMin[2]]
-    t = [aabbMin[0], aabbMax[1], aabbMin[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMin[0], aabbMax[1], aabbMin[2]]
-    t = [aabbMin[0], aabbMax[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    
-    f = [aabbMax[0], aabbMax[1], aabbMax[2]]
-    t = [aabbMin[0], aabbMax[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1.0, 0.5, 0.5])
-    f = [aabbMax[0], aabbMax[1], aabbMax[2]]
-    t = [aabbMax[0], aabbMin[1], aabbMax[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-    f = [aabbMax[0], aabbMax[1], aabbMax[2]]
-    t = [aabbMax[0], aabbMax[1], aabbMin[2]]
-    pb.addUserDebugLine(f, t, [1, 1, 1])
-
-
 def calculate_param(part_name,scale):
+    '''
+    Calculate parameters of images for training data of each particular object type
+
+    #input
+    part_name   : The name of the object type
+    scale       : Scale differences between trimesh and pybullet environment
+
+    #output
+    None. It will print the rough estimate of the needed parameters to create images.
+    '''
     part_parameters = parameters[part_name]
     part_dir = [part_parameters[7], part_parameters[8]]
 

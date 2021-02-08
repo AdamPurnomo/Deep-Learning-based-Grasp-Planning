@@ -54,6 +54,7 @@ def load_parts (position, orientation, part_dir, scale):
 def load_container ():
     '''
     Load the container into the simulation environment.
+    
     #input
     None
 

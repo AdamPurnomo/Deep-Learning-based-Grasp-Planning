@@ -72,16 +72,24 @@ def draw_grasps (grasps, depthImg, rgb):
         
     return np.array(im_pil)
 
-def draw_grasp_representation(grasps, ap_vectors, labels, depthImg, data_size):
+def draw_grasp_representation(grasps, best, ap_vectors, labels, depthImg, data_size, save_dir):
     '''
     Draw grasp rectangle at the best grasp candidate's position
     
-    #best_grasp : best grasp candidate
-                  Shape (2,2)
+    #input
+    grasp       : grasp candidates
+                  Shape (n,2,2)
+    best        : boolean value that indicates whether only the best
+                  grasp is drawn or the whole grasp candidates.
+    ap_vectors  : 2D projection of grasp approaching pose vectors
+    labels      : label of each grasp candidates
     depthImg    : depth image
     data_size   : the size of training data image we want to create.
                   the size will depend on the size of the object
     save_dir    : directory for saving the best grasps
+
+    #output
+    dummy       : The whole scene with grasp candidate/s drawn
     '''
     height = data_size[0]
     width = data_size[1]
@@ -89,10 +97,21 @@ def draw_grasp_representation(grasps, ap_vectors, labels, depthImg, data_size):
     depthImg = cv2.cvtColor(depthImg, cv2.COLOR_GRAY2RGB)
     dummy = Image.fromarray(depthImg)
 
+    if(best==True):
+        iterator = len(grasps)
+    else:
+        iterator = 1
+    
     for i in range(len(grasps)):
-        grasp = grasps[i]
-        ap_vector = ap_vectors[i]
-        label = labels[i]      
+        if(best==False):
+            grasp = grasps[i]
+            ap_vector = ap_vectors[i]
+            label = labels[i]
+        else:
+            grasp = grasps
+            ap_vector = ap_vectors
+            label = labels   
+
         #rotating the grasp representation
         center = ((grasp[0] + grasp[1]) / 2).astype(int)
         vect1 = grasp[1] - grasp[0]
@@ -120,8 +139,9 @@ def draw_grasp_representation(grasps, ap_vectors, labels, depthImg, data_size):
             draw.ellipse(((ap_vector[0]-3, ap_vector[1]-3), (ap_vector[0]+3, ap_vector[1]+3)), fill =(0,0,255))
         else:
              draw.polygon(r_vertices, outline = (0,0,255))
-    
+        
     #save image
+    dummy.save(save_dir)
     return np.array(dummy)
 
 
@@ -213,11 +233,11 @@ def save_data(save_dir, label, full_img):
             cv2.imwrite(full_arr, full_img[i])
       
         else:
-            #print('Negative Grasp!')
+            print('Negative Grasp!')
             root = save_dir[1]
             name = randomString()
             full_arr = root +  name +'.png'
-            #cv2.imwrite(full_arr, full_img[i])
+            cv2.imwrite(full_arr, full_img[i])
         
         nameid.append(name)
 
