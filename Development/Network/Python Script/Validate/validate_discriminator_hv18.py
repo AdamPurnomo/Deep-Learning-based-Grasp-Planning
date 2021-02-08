@@ -1,4 +1,7 @@
 # %%
+import sys 
+sys.path.append(r'../../../utility')
+sys.path.append(r'../model')
 import tensorflow as tf 
 import numpy as np 
 import matplotlib.pyplot as plt 

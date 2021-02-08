@@ -3,8 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import cv2
 import sys
-sys.path.append(r"C:\Users\Adam\Documents\Development\Network\Python Script\Validate")
-
 import antipodal_sampler as ap
 import img_processor as ip  
 import json

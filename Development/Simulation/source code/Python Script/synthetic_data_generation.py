@@ -4,6 +4,8 @@ Created on Tue Nov 12 16:07:39 2019
 @author: Adam Syammas Zaki P
 """
 # %%
+import sys 
+sys.path.append(r'../../../utility')
 import numpy as np
 import scipy as sp
 import pybullet as pb
@@ -244,9 +246,9 @@ def main(part_name, visualize=False, scale=1):
 
 
 #iterate the program
-num = 1800
-for i in range(num):
-    print("Iteration ", i)
-    main('hv6')
+#num = 1800
+#for i in range(num):
+#    print("Iteration ", i)
+#    main('hv6')
 
 

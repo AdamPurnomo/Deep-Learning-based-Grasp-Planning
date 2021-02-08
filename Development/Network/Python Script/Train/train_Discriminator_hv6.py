@@ -1,4 +1,7 @@
 # %%
+import sys 
+sys.path.append(r'../../../utility')
+sys.path.append(r'../model')
 import os
 import numpy as np 
 import random as r 
@@ -10,7 +13,7 @@ import metrics as m
 import math
 
 from model import Discriminator
-
+#%%
 # loading data into RAM
 data_path = r'..\..\Training Data\Discriminator\hv6'
 
