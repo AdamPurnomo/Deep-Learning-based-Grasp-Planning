@@ -50,6 +50,7 @@ def main(part_name, visualize=False, scale=1):
     #input
     part_name       : The name of the target object (str)
     visualize       : Boolean whether to visualize the simulation or not
+    scale           : Relative sclace of the 3D CAD data and the simulation environment
     '''
      
     #parmeters initialization
@@ -244,11 +245,11 @@ def main(part_name, visualize=False, scale=1):
                    nameid)
     pb.disconnect()
 
+if __name__ == "__main__":
+    num = 1800
+    for i in range(num):
+        print("Iteration: ", i)
+        main('hv6')
 
-#iterate the program
-#num = 1800
-#for i in range(num):
-#    print("Iteration ", i)
-#    main('hv6')
 
 

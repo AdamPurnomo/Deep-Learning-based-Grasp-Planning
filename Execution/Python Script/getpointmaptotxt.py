@@ -1,12 +1,21 @@
 import sys
-sys.path.append(r"C:/Users/Adam/Desktop/Controller_Ver.3.8.7/Themes/adam/Execution/Camera Python Binding/x64/Release")
+sys.path.append(r"../Camera Python Binding/x64/Release")
 
-savedir = r'temporary/'
 import getpointmap
 import numpy as np
 
-def importpointmap():
-    for i in range(1,65):
+def importpointmap(iteration,savedir):
+	'''
+    Collecting pointmap data from camera to txt files.
+    
+    #input
+    iteration   : Number of pointmap data taken
+    savedir     : Directory to save the pointmap data
+
+    #output
+    None.
+    '''
+    for i in range(iteration):
         print('Iteration : ' + str(i))
         pointmap = getpointmap.getpointmap()
         pointmap = np.array(pointmap)

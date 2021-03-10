@@ -125,4 +125,5 @@ def calculate_param(part_name,scale):
 
 
 
-
+if __name__ == "__main__":
+    calculate_param('hv6', 10)

@@ -13,6 +13,17 @@ with open(par_dir) as f:
     parameters = json.load(f)
 
 def generate_data(part_name, rawdata_num):
+    '''
+    Generate unannotated individual grasp images for training data form 
+    pointmap data taken from camera. 
+
+    #input
+    part_name   : Name of the object
+    rawdata_num : Total of available pointmap data file from directory.
+
+    #output
+    None. This function will save it to the training directory.
+    '''
 
     #setting directory
     save_dir = r'../Training Data/Real Data/'+part_name+r'/un-annotated/'
@@ -59,6 +70,3 @@ def generate_data(part_name, rawdata_num):
         data, _ = ip.data_generator(grasps, depthImg, data_size)
 
         ip.save_data(save_dir,data)
-
-
-generate_data('hv6',63)

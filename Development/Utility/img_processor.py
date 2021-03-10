@@ -102,7 +102,7 @@ def draw_grasp_representation(grasps, best, ap_vectors, labels, depthImg, data_s
     else:
         iterator = 1
     
-    for i in range(len(grasps)):
+    for i in range(iterator):
         if(best==False):
             grasp = grasps[i]
             ap_vector = ap_vectors[i]
@@ -134,11 +134,15 @@ def draw_grasp_representation(grasps, best, ap_vectors, labels, depthImg, data_s
 
         #drawing grasp bounding box
         draw = ImageDraw.Draw(dummy)
-        if(label==1):
-            draw.polygon(r_vertices, outline = (0,255,0))
-            draw.ellipse(((ap_vector[0]-3, ap_vector[1]-3), (ap_vector[0]+3, ap_vector[1]+3)), fill =(0,0,255))
+        if(best==False):
+            if(label==1):
+                draw.polygon(r_vertices, outline = (0,255,0))
+                draw.ellipse(((ap_vector[0]-3, ap_vector[1]-3), (ap_vector[0]+3, ap_vector[1]+3)), fill =(0,0,255))
+            else:
+                draw.polygon(r_vertices, outline = (0,0,255))
         else:
-             draw.polygon(r_vertices, outline = (0,0,255))
+            draw.polygon(r_vertices, outline = (0,255,0))
+            draw.ellipse(((ap_vector[0]-3, ap_vector[1]-3), (ap_vector[0]+3, ap_vector[1]+3)), fill =(255))
         
     #save image
     dummy.save(save_dir)

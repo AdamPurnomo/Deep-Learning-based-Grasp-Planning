@@ -17,9 +17,9 @@ import pandas as pd
 from model import Discriminator, MaskPredictor, GraspNet
 
 #parameters
-parameters = {'hv18': [35, 45, 220, 100], 
-              'hv8':[170, 180, 220, 220],
-	      'hv9': [35, 45, 220, 100]}
+with open(r'../../Development/Simulation/source code/JSON File/parameters.json') as f:
+    parameters = json.load(f)
+
 img_save_dir = r'../Grasp Sequence Image/ '
 temp_dir = r'../Temporary Data/ '
 
@@ -110,8 +110,25 @@ while(iterator<loop_num):
 		scores = np.vstack(scores_list)
 		masks = np.array(masks_list)
 
-		#sorting positive candidates
+		#Pruning nonvalid grasps
+		rel_vect, norm = pe.locate_sparse_matrix(masks)
+		valid_id = np.where(norm < 25)
+		scores = scores[valid_id[0]]
+		grasps = grasps[valid_id[0]]
+		masks = masks[valid_id[0]]
+		r_matrix = r_matrix[valid_id[0]]
+		data = data[valid_id[0]]
+		print('Number of Valid Grasps :', len(valid_id[0]))
+		
+		#extracting positive grasps
 		p_indices = np.where(scores >= 0.5)
+		if(len(p_indices[0]) == 0):
+			print('No good grasp is found. Taking the highest score.')
+			p_indices = np.argsort(scores[:,0])[::-1]
+			p_indices = p_indices[0:3]
+			p_indices = np.array([p_indices,'dummy'])
+
+		#sorting positive grasps
 		p_scores = scores[p_indices[0]]
 		p_grasps = grasps[p_indices[0]]
 		p_masks = masks[p_indices[0]]
@@ -134,8 +151,12 @@ while(iterator<loop_num):
 		
 
 		#image sequence logging
-		save_dir = img_save_dir + str(iterator) + '.png' 
-		index = np.random.randint(0,3)
+		save_dir = img_save_dir + str(iterator) + '.png'
+		size_p = len(p_grasps)
+		if(size_p>3):
+			index = np.random.randint(0,3)
+		else:
+			index = 0
 		best_grasp = p_grasps[index]
 		ap_vect = ga_vect[index]
 		orient = euler[index]
@@ -144,7 +165,7 @@ while(iterator<loop_num):
 		
 		
 		#Drawing Rectangle
-		ip.draw_best_grasp(best_grasp, ap_vect, depthImg, data_size, save_dir)
+		ip.draw_grasp_representation(grasps, True, ap_vect, p_indices, depthImg, data_size, save_dir)
 		print("Image has been saved!\n")
 
 		#grasp position and orientation logging
