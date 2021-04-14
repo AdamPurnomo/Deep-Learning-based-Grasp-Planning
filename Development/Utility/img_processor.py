@@ -247,6 +247,52 @@ def save_data(save_dir, label, full_img):
 
     return np.asarray(nameid)
 
+def pointmaptodepth(savedir, fileformat, img_size, roi):
+    '''
+    Convert pointmap from txt or npy file to depth image
+    
+    #input
+    savedir     : Directory to save the pointmap data
+    fileformat  : file format of the saved pointmap
+    roi         : region of interest from the pointmap
+    img_size    : image size to reshape the pointmap
+
+    #output
+    depthimg    : Depth imge of the corresponding pointmap
+    '''
+    if(fileformat=='txt'):
+        pm = np.loadtxt(savedir)
+    elif(fileformat=='npy'):
+        pm = np.load(savedir)
+        
+    xindices = np.arange(0, len(pm), 3)
+    yindices = xindices + 1
+    zindices = yindices + 1
+    
+        
+    z = pm[zindices]
+    z = z.reshape((img_size[0], img_size[1]))
+    z = z[roi[0]:roi[1], roi[2]:roi[3]]
+    z = np.array(z, dtype='float32')
+        
+    invalid_id = np.where(np.isnan(z))
+    mask = np.zeros(z.shape, dtype='uint8')
+    mask[invalid_id] = 1
+        
+    z = cv2.inpaint(z, mask, 3, cv2.INPAINT_TELEA)
+
+    depthImg = 255 - cv2.normalize(z, 
+                            dst=None, 
+                            alpha=0, 
+                            beta=255, 
+                            norm_type=cv2.NORM_MINMAX, 
+                            dtype=cv2.CV_8UC1)
+        
+    invalid_id = np.where(depthImg == 255)
+    mask = np.zeros(depthImg.shape, dtype = 'uint8')
+    mask[invalid_id] = 255
+    depthImg = cv2.inpaint(depthImg,mask,3,cv2.INPAINT_TELEA)
+    return depthImg
 
 
         

@@ -3,6 +3,8 @@ sys.path.append(r"../Camera Python Binding/x64/Release")
 
 import getpointmap
 import numpy as np
+import cv2
+
 
 def importpointmap(iteration,savedir):
 	'''
@@ -27,4 +29,8 @@ def importpointmap(iteration,savedir):
         z = pointmap[zindices]
         filedir = savedir + r'pointmap' + str(i)
         np.save(filedir, z)
+
+   
+        
+
 
