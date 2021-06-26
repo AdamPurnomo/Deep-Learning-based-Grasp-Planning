@@ -98,9 +98,9 @@ def draw_grasp_representation(grasps, best, ap_vectors, labels, depthImg, data_s
     dummy = Image.fromarray(depthImg)
 
     if(best==True):
-        iterator = len(grasps)
-    else:
         iterator = 1
+    else:
+        iterator = len(grasps)
     
     for i in range(iterator):
         if(best==False):

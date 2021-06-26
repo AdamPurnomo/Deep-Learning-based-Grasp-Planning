@@ -104,7 +104,7 @@ def line_antipodal_sampler (edge_pixels, normals, grasp_range):
     k = 0
     grasps = []
     normals = []
-    while k < grasp_indices.shape[0] and len(grasps) < 200:
+    while k < grasp_indices.shape[0] and len(grasps) < 80:
         p1 = contact_points1[grasp_indices[k],:]
         p2 = contact_points2[grasp_indices[k],:]
         n1 = normals_points1[grasp_indices[k],:]

@@ -1,7 +1,7 @@
 
 # %%
 import sys
-sys.path.append(r"C:/Users/Adam/Desktop/Controller_Ver.3.8.7/Themes/adam/Execution/Camera Python Binding/x64/Release")
+sys.path.append(r"C:\Users\Adam\Documents\Deep Learning-Based Grasp Detection\Execution\Camera Python Binding\x64\Release")
 
 import numpy as np 
 import cv2
