@@ -10,3 +10,10 @@ For more detail, please take a look at [Deep Learning-based 6-DoF Grasp Estimati
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/overview.png?raw=true">
 </p>
+
+## Network Architecture
+The network takes inputs of individual grasp image and outputs the grasping score and the 2D projection of the grasp approaching pose vector. The network is divided into three parts: feature extractor, grasp pose estimator and grasp quality estimator.
+
+<p align="center">
+  <img width=100% height=100% src="![image](https://user-images.githubusercontent.com/56242442/135575339-cebac209-7762-42a8-90e2-ec65a96c546a.png)">
+</p>
