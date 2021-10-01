@@ -37,7 +37,7 @@ This folder contains all files required for performing experiments. The controll
 
 ## Experiments
 
-This method is validated with 4 types of industrial objects. The full video experiment can be seen [here] ().
+This method is validated with 4 types of industrial objects. The full video experiment can be seen [here](https://youtu.be/J0o0fcqUbLQ).
 
 ### Object A
 <p align="center">
