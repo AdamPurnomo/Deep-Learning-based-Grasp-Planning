@@ -8,5 +8,5 @@ precise 6D pose of the target object to get a reasonably good grasp. A rough est
 For more detail, please take a look at [Deep Learning-based 6-DoF Grasp Estimation for Industrial Bin-Picking](https://drive.google.com/file/d/13bMaAVxF_TxXuYZXmq5LAVM3r0F_-B0Z/view?usp=sharing) (in the process of submission). 
 
 <p align="center">
-  <img width=75% height=75% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/overview.png?raw=true">
+  <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/overview.png?raw=true">
 </p>
