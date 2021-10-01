@@ -54,7 +54,12 @@ This method is validated with 4 types of industrial objects. The full video expe
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20C%20success.png">
 </p>
 
+### Dependencies
+* 
+
 ### Object D
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20D%20success.png">
 </p>
+
+
