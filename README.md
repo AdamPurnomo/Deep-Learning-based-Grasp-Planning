@@ -54,12 +54,16 @@ This method is validated with 4 types of industrial objects. The full video expe
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20C%20success.png">
 </p>
 
-### Dependencies
-* 
-
 ### Object D
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20D%20success.png">
 </p>
 
+## Dependencies
+* tensor flow 2.5.0
+* numpy 1.19.4
+* opencv-python 4.4.0.46
+* pillow 8.0.1
+* trimesh 3.9.19
+* pybullet 3.0.7
 
