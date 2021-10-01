@@ -22,7 +22,7 @@ The network takes inputs of individual grasp image and outputs the grasping scor
 Description of each folder
 
 1. Development
-This folder contains all files for the development of the system. It has 5 subfolders.
+This folder contains all files for the development of the system. It has 2 subfolders.
   * Network
     contains training data, test data, and script for training and test the network
   * Simulation
