@@ -22,18 +22,22 @@ The network takes inputs of individual grasp image and outputs the grasping scor
 
 This method is validated with 4 types of industrial objects. The full video experiment can be seen [here] ().
 
+### Object A
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20A%20success.png">
 </p>
 
+### Object B
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20B%20success.png">
 </p>
 
+### Object C
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20C%20success.png">
 </p>
 
+### Object D
 <p align="center">
   <img width=100% height=100% src="https://github.com/AdamPurnomo/Deep-Learning-based-Grasp-Planning/blob/main/Images/object%20D%20success.png">
 </p>
