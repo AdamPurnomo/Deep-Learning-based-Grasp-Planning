@@ -22,13 +22,15 @@ The network takes inputs of individual grasp image and outputs the grasping scor
 Description of each folder
 
 1. Development
-This folder contains all files for the development of the system. It has 2 subfolders.
+This folder contains all files for the development of the system. It has 3 subfolders.
   * Network
     contains training data, test data, and script for training and test the network
   * Simulation
     contains script for performing simulation and generating synthetic data. The generated
     synthetic data is saved inside the Image folder. The main file for creating synthetic data is `synthetic_data_generation.py`.
     The rest of them are modules.
+  * Utility
+    cotains python module used for data preprocessing
 All python script modules contain documentation of each function. Please take a look at the particular python file 
 to look more in detail what each function does.
 	
